@@ -7,7 +7,13 @@ document.querySelector("#btnSearch").addEventListener("click",() => {
   function getCountry(country){
 
     fetch('https://restcountries.com/v3.1/name/' + country)
-    .then((response)=> response.json())
+    .then((response)=> {
+      if(!response.ok)
+        throw new Error("ülke bulunamadı")
+
+      response.json()
+    
+    })
     .then((data)=> {
         renderCountry(data[0]);
         const countries = data[0].borders.toString();
@@ -15,6 +21,7 @@ document.querySelector("#btnSearch").addEventListener("click",() => {
         return fetch('https://restcountries.com/v3.1/alpha?codes='+ countries)
     }).then(response => response.json())
     .then((data) => renderNeighbors(data))
+    .catch(err => renderError(err))
 }
 
 
@@ -75,6 +82,20 @@ document.querySelector("#btnSearch").addEventListener("click",() => {
       `;
     } 
     document.querySelector("#neighbors").innerHTML= html;
+  }
+
+  function renderError (err){
+    const html = `
+        <div class="alert alert-danger"> 
+        ${err.message}        
+        </div>
+    `
+    setTimeout(function(){
+      document.querySelector("#errors").innerHTML = "";
+
+    },3000)
+    document.querySelector("#errors").innerHTML = html;
+
   }
   
 
