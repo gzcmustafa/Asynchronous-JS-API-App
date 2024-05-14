@@ -6,26 +6,48 @@ document.querySelector("#btnSearch").addEventListener("click",() => {
   getCountry(text)
 })
 
-  function getCountry(country){
+  async function getCountry(country){
 
-    fetch('https://restcountries.com/v3.1/name/' + country)
-    .then((response)=> {
+    try {
+      const response = await fetch('https://restcountries.com/v3.1/name/' + country)
       if(!response.ok)
         throw new Error("ülke bulunamadı")
-      return response.json()
+      const data = await response.json();
+      renderCountry(data[0]);
+
+      const countries = data[0].borders;
+      if(!countries)
+        throw new Error("Komşu Ülke Bulunamadı")
+      const response2 = await fetch('https://restcountries.com/v3.1/alpha?codes='+ countries);
+      const neighbors = await response2.json();
+
+      renderNeighbors(neighbors);
+      
+
+
+    }
+    catch(err){
+      renderError(err)      
+    }
+
+    // fetch('https://restcountries.com/v3.1/name/' + country)
+    // .then((response)=> {
+    //   if(!response.ok)
+    //     throw new Error("ülke bulunamadı")
+    //   return response.json()
     
-    })
-    .then((data)=> {
-        renderCountry(data[0]);
-        const countries = data[0].borders;
+    // })
+    // .then((data)=> {
+    //     renderCountry(data[0]);
+    //     const countries = data[0].borders;
 
-        if(!countries)
-          throw new Error("Komşu ülke bulunamadı")
+    //     if(!countries)
+    //       throw new Error("Komşu ülke bulunamadı")
 
-        return fetch('https://restcountries.com/v3.1/alpha?codes='+ countries)
-    }).then(response => response.json())
-    .then((data) => renderNeighbors(data))
-    .catch(err => renderError(err))
+    //     return fetch('https://restcountries.com/v3.1/alpha?codes='+ countries)
+    // }).then(response => response.json())
+    // .then((data) => renderNeighbors(data))
+    // .catch(err => renderError(err))
 }
 
 
