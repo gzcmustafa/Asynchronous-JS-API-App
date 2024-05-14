@@ -1,6 +1,8 @@
 
 document.querySelector("#btnSearch").addEventListener("click",() => {
-  let text = document.querySelector("#txtSearch").value
+  let text = document.querySelector("#txtSearch").value;
+  document.querySelector("#details").style.opacity = 0;
+
   getCountry(text)
 })
 
@@ -10,13 +12,15 @@ document.querySelector("#btnSearch").addEventListener("click",() => {
     .then((response)=> {
       if(!response.ok)
         throw new Error("ülke bulunamadı")
-
-      response.json()
+      return response.json()
     
     })
     .then((data)=> {
         renderCountry(data[0]);
-        const countries = data[0].borders.toString();
+        const countries = data[0].borders;
+
+        if(!countries)
+          throw new Error("Komşu ülke bulunamadı")
 
         return fetch('https://restcountries.com/v3.1/alpha?codes='+ countries)
     }).then(response => response.json())
@@ -26,12 +30,13 @@ document.querySelector("#btnSearch").addEventListener("click",() => {
 
 
   function renderCountry(data) {
+
+    document.querySelector("#country-details").innerHTML = "";
+    document.querySelector("#neighbors").innerHTML = "";
+
+
      
-     let html =`   <div class="card-header">
-      Arama Sonucu:
-    </div>
-    <div class="card-body">
-      <div class="row">
+     let html =`
         <div class="col-4">
           <img src="${data.flags.png}" alt="" class="img-fluid">
         </div>
@@ -56,9 +61,8 @@ document.querySelector("#btnSearch").addEventListener("click",() => {
           </div>
           
         </div>
-      </div>
-    </div>
     `;
+    document.querySelector("#details").style.opacity = 1;
     document.querySelector("#country-details").innerHTML = html;
   
 }
