@@ -1,9 +1,12 @@
 .col-3 {
     margin-top: 29px;
 }
+#details {
+    opacity: 0;
+}
 .col-2 img {
     height: 120px;
 }
-#details {
-    opacity: 0;
+#loading {
+    display: none;
 }
